@@ -4,12 +4,25 @@ import java.util.ArrayList;
 
 public class Role
 {
+    private int id;
     private String nom;
     private ArrayList<Utilisateur> listeUtilisateur;
 
-    public Role(String nom)
+    public Role() {
+    }
+
+    public Role(int id, String nom)
     {
+        this.id = id;
         this.nom = nom;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getNom() {

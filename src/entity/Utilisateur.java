@@ -2,6 +2,7 @@ package entity;
 
 public class Utilisateur
 {
+    private int id;
     private String nom;
     private String prenom;
     private String email;
@@ -10,22 +11,33 @@ public class Utilisateur
 
     private String motDePasse;
     private String motDePasseHache;
+    private Role role;
 
     public Utilisateur()
     {
     }
 
-    public Utilisateur(String nom, String prenom, String email, String telephone, String adresse, String motDePasse, String motDePasseHache)
+    public Utilisateur(int id, String nom, String prenom, String email, String telephone, String adresse, String motDePasse, String motDePasseHache, Role role)
     {
+        this.id = id;
         this.nom = nom;
         this.prenom = prenom;
         this.email = email;
         this.telephone = telephone;
         this.adresse = adresse;
         this.motDePasse = motDePasse;
-        this.motDePasseHache = motDePasseHache;
+        this.motDePasseHache = null;
+        this.role = role;
     }
 
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public String getNom() {
         return nom;
@@ -81,5 +93,13 @@ public class Utilisateur
 
     public void setMotDePasseHache(String motDePasseHache) {
         this.motDePasseHache = motDePasseHache;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
     }
 }
