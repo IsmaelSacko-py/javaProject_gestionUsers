@@ -206,4 +206,39 @@ public class UtilisateurImp implements IUtilisateur
 
         return role;
     }
+
+    public Utilisateur seConnecter()
+    {
+        Scanner clavier = new Scanner(System.in);
+        System.out.println("Email : ");
+        String email = clavier.nextLine();
+
+        System.out.println("Mot de passe : ");
+        String motDePasse = clavier.nextLine();
+
+        String request = "SELECT * FROM utilisateurs WHERE email = ? AND motDePasse = ?";
+        Utilisateur user = null;
+        try
+        {
+            this.db.initPrepare(request);
+            this.db.getPstm().setString(1, email);
+            this.db.getPstm().setString(2, motDePasse);
+            this.rs = this.db.executeSelect();
+            if(this.rs.next())
+            {
+                user = new Utilisateur();
+                user.setId(this.rs.getInt("id"));
+                user.setNom(this.rs.getString("nom"));
+                user.setPrenom(this.rs.getString("prenom"));
+                user.setEmail(this.rs.getString("email"));
+                user.setTelephone(this.rs.getString("telephone"));
+                user.setAdresse(this.rs.getString("adresse"));
+                user.setMotDePasse(this.rs.getString("motDePasse"));
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return user;
+    }
 }

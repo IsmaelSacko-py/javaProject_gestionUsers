@@ -16,10 +16,19 @@ public class Main {
 //            iUtilisateur.ajouter(iUtilisateur.saisir());
 //        }
 
-        Utilisateur user = iUtilisateur.get(4);
-        user.setNom("Odzounalo OFOU");
-        user.setPrenom("Hance Cruz");
-        iUtilisateur.modifier(user);
-        iUtilisateur.lister();
+        do
+        {
+            Utilisateur connected = iUtilisateur.seConnecter();
+            if (connected == null)
+            {
+                System.out.println("Identifiants incorrect");
+            }else
+            {
+                System.out.println("Connectée");
+                break;
+            }
+
+        }while(true);
+
     }
 }
