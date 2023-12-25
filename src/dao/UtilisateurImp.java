@@ -83,7 +83,7 @@ public class UtilisateurImp implements IUtilisateur
     public List<Utilisateur> getUtilisateurs()
     {
         List<Utilisateur> users = new ArrayList<>();
-        String request = "SELECT * FROM utilisateurs user";
+        String request = "SELECT * FROM utilisateurs user WHERE id != 1";
         try
         {
             this.db.initPrepare(request);
@@ -280,10 +280,10 @@ public class UtilisateurImp implements IUtilisateur
     public Utilisateur seConnecter()
     {
         Scanner clavier = new Scanner(System.in);
-        System.out.println("Email : ");
+        System.out.print("Email : ");
         String email = clavier.nextLine();
 
-        System.out.println("Mot de passe : ");
+        System.out.print("Mot de passe : ");
         String motDePasse = clavier.nextLine();
 
         String request = "SELECT * FROM utilisateurs WHERE email = ? AND motDePasse = ?";
@@ -304,7 +304,6 @@ public class UtilisateurImp implements IUtilisateur
                 user.setTelephone(this.rs.getString("telephone"));
                 user.setAdresse(this.rs.getString("adresse"));
                 user.setMotDePasse(this.rs.getString("motDePasse"));
-
             }
 
         } catch (SQLException e) {
@@ -319,15 +318,19 @@ public class UtilisateurImp implements IUtilisateur
         if(user.getId() == 1)
         {
             this.adminMenu();
-        }else
+        }else if(user.getId() == 2)
         {
             this.RHMenu();
+        }else
+        {
+            this.autreMenu();
         }
     }
 
     public void adminMenu()
     {
         Scanner clavier = new Scanner(System.in);
+        boolean exit = true;
         do {
             System.out.println("1.Lister");
             System.out.println("2.Ajouter");
@@ -351,14 +354,15 @@ public class UtilisateurImp implements IUtilisateur
                     this.supprimer();
                     break;
                 case 5:
-                    break;
+                    exit = false;
             }
-        }while(true);
+        }while(exit);
     }
 
     public void RHMenu()
     {
         Scanner clavier = new Scanner(System.in);
+        boolean exit = true;
         do {
             System.out.println("1.Lister");
             System.out.println("2.Ajouter");
@@ -370,13 +374,36 @@ public class UtilisateurImp implements IUtilisateur
             {
                 case 1:
                     this.lister();
+                    break;
                 case 2:
                     this.ajouter();
+                    break;
                 case 3:
                     this.modifier();
-                case 4:
                     break;
+                case 4:
+                    exit = false;
             }
-        }while(true);
+        }while(exit);
+    }
+
+    public void autreMenu()
+    {
+        Scanner clavier = new Scanner(System.in);
+        boolean exit = true;
+        do {
+            System.out.println("1.Lister");
+            System.out.println("2.Quitter");
+            System.out.println("Selectionner une action : ");
+            int choix1 = clavier.nextInt();
+            switch(choix1)
+            {
+                case 1:
+                    this.lister();
+                    break;
+                case 2:
+                    exit = false;
+            }
+        }while(exit);
     }
 }
