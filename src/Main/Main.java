@@ -12,23 +12,20 @@ public class Main {
         db.getConnection();
         IUtilisateur iUtilisateur = new UtilisateurImp();
 
-//        for (int i = 0; i < 3; i++) {
-//            iUtilisateur.ajouter(iUtilisateur.saisir());
-//        }
-
+        Utilisateur connected = null;
         do
         {
-            Utilisateur connected = iUtilisateur.seConnecter();
-            if (connected == null)
+            connected = iUtilisateur.seConnecter();
+            if(connected != null)
             {
-                System.out.println("Identifiants incorrect");
+                break;
             }else
             {
-                System.out.println("Connectée");
-                break;
+                System.out.println("Identifiants incorrect");
             }
-
         }while(true);
 
+        iUtilisateur.menu(connected);
     }
+
 }

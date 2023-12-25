@@ -8,14 +8,19 @@ import java.util.List;
 public interface IUtilisateur
 {
     Utilisateur saisir();
-    int ajouter(Utilisateur utilisateur);
+    int ajouter();
     List<Utilisateur> getUtilisateurs();
     void lister();
-    int modifier(Utilisateur user);
-    int supprimer(int id);
+    int modifier();
+    int supprimer();
     Role getRole(int id);
 
     Utilisateur get(int id);
 
     Utilisateur seConnecter();
+
+    void menu(Utilisateur user);
+
+    void adminMenu();
+    void RHMenu();
 }

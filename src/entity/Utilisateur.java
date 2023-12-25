@@ -22,12 +22,17 @@ public class Utilisateur
         this.id = id;
         this.nom = nom;
         this.prenom = prenom;
-        this.email = email;
+        this.email = this.generateEmail();
         this.telephone = telephone;
         this.adresse = adresse;
         this.motDePasse = motDePasse;
         this.motDePasseHache = null;
         this.role = role;
+    }
+
+    private String generateEmail()
+    {
+        return this.prenom+"@gmail.com";
     }
 
 
