@@ -11,13 +11,13 @@ public class Utilisateur
 
     private String motDePasse;
     private String motDePasseHache;
-    private Role role;
+    private Roles role;
 
     public Utilisateur()
     {
     }
 
-    public Utilisateur(int id, String nom, String prenom, String email, String telephone, String adresse, String motDePasse, String motDePasseHache, Role role)
+    public Utilisateur(int id, String nom, String prenom, String email, String telephone, String adresse, String motDePasse, Roles role)
     {
         this.id = id;
         this.nom = nom;
@@ -100,11 +100,11 @@ public class Utilisateur
         this.motDePasseHache = motDePasseHache;
     }
 
-    public Role getRole() {
+    public Roles getRole() {
         return role;
     }
 
-    public void setRole(Role role) {
-        this.role = role;
+    public void setRole(Roles idRole) {
+        this.role = idRole;
     }
 }

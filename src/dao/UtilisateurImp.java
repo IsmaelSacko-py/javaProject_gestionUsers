@@ -1,6 +1,7 @@
 package dao;
 
 import entity.Role;
+import entity.Roles;
 import entity.Utilisateur;
 
 import java.sql.ResultSet;
@@ -53,6 +54,26 @@ public class UtilisateurImp implements IUtilisateur
             }
         }while(true);
 
+        boolean exit = true;
+        do {
+            System.out.println("Roles");
+            System.out.println("1."+ Roles.RH);
+            System.out.println("2."+Roles.comptable);
+            System.out.println("3."+Roles.employe);
+            int choix = clavier.nextInt();
+            switch (choix)
+            {
+                case 1 :
+                    user.setRole(Roles.RH);
+                    exit = false;
+                case 2 :
+                    user.setRole(Roles.comptable);
+                    exit = false;
+                case 3 :
+                    user.setRole(Roles.employe);
+                    exit = false;
+            }
+        } while (exit);
         return user;
     }
 
@@ -83,7 +104,7 @@ public class UtilisateurImp implements IUtilisateur
     public List<Utilisateur> getUtilisateurs()
     {
         List<Utilisateur> users = new ArrayList<>();
-        String request = "SELECT * FROM utilisateurs user WHERE id != 1";
+        String request = "SELECT * FROM utilisateurs user, roles R WHERE user.idRole = R.id AND user.id != 1";
         try
         {
             this.db.initPrepare(request);
@@ -98,6 +119,7 @@ public class UtilisateurImp implements IUtilisateur
                 user.setTelephone(this.rs.getString("user.telephone"));
                 user.setAdresse(this.rs.getString("user.adresse"));
                 user.setMotDePasse(this.rs.getString("user.motDePasse"));
+                user.setRole(Roles.valueOf(this.rs.getString("R.nom")));
                 users.add(user);
             }
         }catch(Exception e)
@@ -110,40 +132,45 @@ public class UtilisateurImp implements IUtilisateur
     public void lister()
     {
         List<Utilisateur> users = this.getUtilisateurs();
-        System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------");
+        System.out.println("-".repeat(164));
         System.out.print("|Id |");
-        System.out.printf("%10s", "Nom");
-        System.out.printf("%10s", "|");
-        System.out.printf("%15s", "Prenom");
-        System.out.printf("%10s", "|");
-        System.out.printf("%15s", "Email");
-        System.out.printf("%10s", "|");
-        System.out.printf("%15s", "Telephone");
-        System.out.printf("%10s", "|");
-        System.out.printf("%15s", "Adresse");
-        System.out.printf("%10s", "|");
-        System.out.printf("%15s", "Mot de passe");
-        System.out.printf("%10s\n", "|");
-        System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------");
+        System.out.printf(" ".repeat(7)+"%s"+" ".repeat(7), "Nom");
+        System.out.print("|");
+        System.out.printf(" ".repeat(6)+"%s"+" ".repeat(6), "Prenom");
+        System.out.print("|");
+        System.out.printf(" ".repeat(8)+"%s"+" ".repeat(8), "Email");
+        System.out.print("|");
+        System.out.printf(" ".repeat(5)+"%s"+" ".repeat(5), "Telephone");
+        System.out.print("|");
+        System.out.printf(" ".repeat(5)+"%s"+" ".repeat(5), "Adresse");
+        System.out.print("|");
+        System.out.printf(" ".repeat(3)+"%s"+" ".repeat(3), "Mot de passe");
+        System.out.print("|");
+        System.out.printf(" ".repeat(3)+"%s"+" ".repeat(3), "Mot de passe crypté");
+        System.out.print("|");
+        System.out.printf(" ".repeat(6)+"%s"+" ".repeat(6), "Rôle");
+        System.out.print("|\n");
+        System.out.println("-".repeat(164));
 
         for (Utilisateur user : users)
         {
-
-
-
             System.out.printf("| %d |", user.getId());
-            System.out.printf("%10s", user.getNom());
-            System.out.printf("%10s", "|");
-            System.out.printf("%15s", user.getPrenom());
-            System.out.printf("%10s", "|");
-            System.out.printf("%20s", user.getEmail());
+            System.out.printf("%13s", user.getNom());
             System.out.printf("%5s", "|");
+            System.out.printf("%13s", user.getPrenom());
+            System.out.printf("%6s", "|");
+            System.out.printf("%19s", user.getEmail());
+            System.out.printf("%3s", "|");
             System.out.printf("%15s", user.getTelephone());
-            System.out.printf("%10s", "|");
+            System.out.printf("%5s", "|");
             System.out.printf("%15s", user.getAdresse());
-            System.out.printf("%10s", "|");
-            System.out.printf("%15s", user.getMotDePasse());
-            System.out.printf("%10s\n", "|");
+            System.out.printf("%3s", "|");
+            System.out.printf("%11s", user.getMotDePasse());
+            System.out.printf("%8s", "|");
+            System.out.printf("%15s", " ");
+            System.out.printf("%11s", "|");
+            System.out.printf("%12s", user.getRole());
+            System.out.printf("%5s\n", "|");
 
 //
 //            System.out.printf("%30s","-----");
@@ -158,7 +185,7 @@ public class UtilisateurImp implements IUtilisateur
 //            System.out.printf("%60s","-----");
 //            System.out.printf("%60s", user.getMotDePasse());
         }
-        System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------");
+        System.out.println("-".repeat(164));
 
     }
 
