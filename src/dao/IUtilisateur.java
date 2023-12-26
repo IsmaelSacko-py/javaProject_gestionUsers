@@ -23,4 +23,9 @@ public interface IUtilisateur
 
     void adminMenu();
     void RHMenu();
+
+    int modifierMotDePasse(String motDePasse, int id);
+
+    void systemPause();
+    void systemCls();
 }
