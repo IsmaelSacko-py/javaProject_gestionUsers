@@ -21,6 +21,13 @@ public class UtilisateurImp implements IUtilisateur {
     public UtilisateurImp() {
     }
 
+
+    /**
+     * Saisie les informations d'un utilisateur excepté email qui est générer
+     * et le mot de passe. A leur création, les utilisateurs ont tous un mot
+     * de passe par defaut.
+     * @return L'utilisateur saisie
+     */
     @Override
     public Utilisateur saisir()  {
         Utilisateur user = new Utilisateur();
@@ -68,6 +75,11 @@ public class UtilisateurImp implements IUtilisateur {
         return user;
     }
 
+    /**
+     * Ajoute un utilisateur.
+     *
+     * @return 1 L'ajout s'est bien passé sinon 0
+     */
     @Override
     public int ajouter()  {
 
@@ -106,6 +118,10 @@ public class UtilisateurImp implements IUtilisateur {
 
     }
 
+    /**
+     * Récupère tous les utilisateurs et leurs rôles excepté l'administrateur.
+     * @return La liste des utilisateurs
+     */
     @Override
     public List<Utilisateur> getUtilisateurs() {
         List<Utilisateur> users = new ArrayList<>();
@@ -131,7 +147,11 @@ public class UtilisateurImp implements IUtilisateur {
         return users;
     }
 
+    /**
+     * Liste tous les utilisateurs à l'exception de l'administrateur.
+     */
     public void lister() {
+
         this.systemCls();
         List<Utilisateur> users = this.getUtilisateurs();
         System.out.println("-".repeat(164));
@@ -198,6 +218,10 @@ public class UtilisateurImp implements IUtilisateur {
     }
 
 
+    /**
+     * Modifie un utilisateur en fonction de l'identifiant de l'utilisateur qui sera renseigné:
+     * @return 1 lorsque la suppression s'effectue correctement sinon 0;
+     */
     @Override
     public int modifier()  {
         this.systemCls();
@@ -236,6 +260,10 @@ public class UtilisateurImp implements IUtilisateur {
 
     }
 
+    /**
+     * Supprime un utilisateur en fonction de l'identifiant de l'utilisateur qui sera renseigné:
+     * @return 1 lorsque la suppression s'effectue correctement sinon 0;
+     */
     @Override
     public int supprimer() {
         this.systemCls();
@@ -264,6 +292,14 @@ public class UtilisateurImp implements IUtilisateur {
         this.systemCls();
         return this.ok;
     }
+
+    /**
+     * Récupère un utilisateur.
+     *
+     * @param id L'identifiant de l'utilisateur
+     *
+     * @return L'utilisateur
+     */
 
     public Utilisateur get(int id) {
         String request = "SELECT * FROM utilisateurs WHERE id = ?";
@@ -308,6 +344,15 @@ public class UtilisateurImp implements IUtilisateur {
 
         return role;
     }
+
+    /**
+     * Permet à un utilisateur de se connecter en entrant son email et son mot de passer.
+     * Si l'utilisateur se connecter pour la première fois alors, il est doit obligatoirement
+     * changer de mot de passe. Après que tout soit conforme, il est redirigé vers un menu spécifique
+     * en fonction de son rôle.
+     *
+     * @return L'utilisateur connecté
+     */
 
     public Utilisateur seConnecter()  {
         Scanner clavier = new Scanner(System.in);
@@ -382,6 +427,12 @@ public class UtilisateurImp implements IUtilisateur {
 
     }
 
+    /**
+     * Represente un menu de manière général. En fonction de l'utilisateur
+     * qui se connecte, il est dirigé vers un menu bien determiné.
+     *
+     * @param user L'utilsateur qui s'est connecté
+     */
     public void menu(Utilisateur user)  {
         Scanner clavier = new Scanner(System.in);
         if (user.getId() == 1) {
@@ -427,6 +478,8 @@ public class UtilisateurImp implements IUtilisateur {
         } while (exit);
     }
 
+
+
     public void RHMenu()  {
         this.systemPause();
         this.systemCls();
@@ -457,6 +510,9 @@ public class UtilisateurImp implements IUtilisateur {
         } while (exit);
     }
 
+    /**
+     * Le menu des tout autre utilisateurs en dehors de l'admin et du RH.
+     */
     public void autreMenu() {
         this.systemPause();
         this.systemCls();
@@ -478,7 +534,17 @@ public class UtilisateurImp implements IUtilisateur {
         } while (exit);
     }
 
+
+    /**
+     * Modifie un mot de passe.
+     *
+     * @param motDePasse Le nouveau mot de passe
+     *
+     * @param id L'identifiant de l'utilisateur dont le mot de passe doit être modifié
+     */
     public int modifierMotDePasse(String motDePasse, int id) {
+
+
         String request = "UPDATE utilisateurs SET motDePasse = ? WHERE id = ?";
         try {
             this.db.initPrepare(request);
@@ -491,20 +557,38 @@ public class UtilisateurImp implements IUtilisateur {
         return ok;
     }
 
+    /**
+     * "Nettoie" la console.
+     */
     public void systemCls() {
+
+
         for (int i = 0; i < 50; i++) {
             System.out.println();
         }
     }
 
+    /**
+     * Met le programme en pause jusqu'à ce aue l'utilisateur presse une touche.
+     */
     public void systemPause() {
+
+
         System.out.print(" ".repeat(60) + "Appuyez sur une touche pour continuer...");
 
         Scanner scanner = new Scanner(System.in);
         scanner.nextLine();
     }
 
+    /**
+     * Crypte ou decrypte un mot de passe passer en paramètre.
+     *
+     * @param motDePasse  Le mot de passe à crypter ou decrypter
+     *
+     * @return Le mot de passe crypter  ou decrypter
+     */
     public String crypteMotDePasse(String motDePasse) {
+
         StringBuilder motDePasseCrypte= new StringBuilder();
         for (int i = 0; i < motDePasse.length(); i++) {
 //            System.out.println((Character.toString(mdp1.charAt(i)+(i+32))));

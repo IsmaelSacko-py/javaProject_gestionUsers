@@ -29,9 +29,13 @@ public class Utilisateur
         this.role = role;
     }
 
+    /**
+     * Génère un email à partir du prenom en miniscule et du domaine gmail.com.
+     * @return L'email générer
+     */
     public String generateEmail()
     {
-        return this.prenom+"@gmail.com";
+        return this.prenom.toLowerCase() + "@gmail.com";
     }
 
 
@@ -89,14 +93,6 @@ public class Utilisateur
 
     public void setMotDePasse(String motDePasse) {
         this.motDePasse = motDePasse;
-    }
-
-    public String getMotDePasseHache() {
-        return motDePasseHache;
-    }
-
-    public void setMotDePasseHache(String motDePasseHache) {
-        this.motDePasseHache = motDePasseHache;
     }
 
     public String getRole() {
