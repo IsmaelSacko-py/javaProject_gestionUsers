@@ -30,7 +30,6 @@ public class DB {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
             this.cnx = DriverManager.getConnection(url, user, password);
-            System.out.println("Connection etablie !");
         } catch (Exception var8) {
             var8.printStackTrace();
         }

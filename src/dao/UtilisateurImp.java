@@ -4,21 +4,25 @@ import entity.Role;
 import entity.Roles;
 import entity.Utilisateur;
 
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-public class UtilisateurImp implements IUtilisateur
-{
+public class UtilisateurImp implements IUtilisateur {
+
 
     DB db = new DB();
     ResultSet rs;
     int ok;
+
+    public UtilisateurImp() {
+    }
+
     @Override
-    public Utilisateur saisir()
-    {
+    public Utilisateur saisir()  {
         Utilisateur user = new Utilisateur();
         Scanner clavier = new Scanner(System.in);
         System.out.println(" ".repeat(60) + "Information d'un utilisateur" + "-".repeat(30));
@@ -36,41 +40,41 @@ public class UtilisateurImp implements IUtilisateur
         System.out.print(" ".repeat(60) + "Adresse : ");
         user.setAdresse(clavier.nextLine());
 
-        user.setMotDePasse("passer");
+        user.setMotDePasse(this.crypteMotDePasse("passer"));
 
         boolean exit = true;
         do {
             System.out.println(" ".repeat(60) + "Roles");
-            System.out.println(" ".repeat(60) + "1."+ Roles.RH);
-            System.out.println(" ".repeat(60) + "2."+Roles.comptable);
-            System.out.println(" ".repeat(60) + "3."+Roles.employe);
+            System.out.println(" ".repeat(60) + "1." + Roles.RH);
+            System.out.println(" ".repeat(60) + "2." + Roles.comptable);
+            System.out.println(" ".repeat(60) + "3." + Roles.employe);
             System.out.print(" ".repeat(60) + "Choisissez une option : ");
             int choix = clavier.nextInt();
-            switch (choix)
-            {
-                case 1 :
+            switch (choix) {
+                case 1:
                     user.setRole("RH");
                     exit = false;
-                case 2 :
+                    break;
+                case 2:
                     user.setRole("comptable");
                     exit = false;
-                case 3 :
+                    break;
+                case 3:
                     user.setRole("employe");
                     exit = false;
+                    break;
             }
         } while (exit);
         return user;
     }
 
     @Override
-    public int ajouter()
-    {
+    public int ajouter()  {
 
         this.systemCls();
         Utilisateur user = this.saisir();
         String request = "INSERT INTO utilisateurs(nom, prenom, email, telephone, adresse, motDePasse, idRole) VALUES(?, ?, ?, ?, ?, ?, ?)";
-        try
-        {
+        try {
             this.db.initPrepare(request);
             this.db.getPstm().setString(1, user.getNom());
             this.db.getPstm().setString(2, user.getPrenom());
@@ -78,20 +82,20 @@ public class UtilisateurImp implements IUtilisateur
             this.db.getPstm().setString(4, user.getTelephone());
             this.db.getPstm().setString(5, user.getAdresse());
             this.db.getPstm().setString(6, user.getMotDePasse());
+
             int role = 0;
-            if(user.getRole().equals("RH"))
-            {
+
+            if (user.getRole().equals("RH")) {
                 role = 2;
             } else if (user.getRole().equals("comptable")) {
                 role = 3;
-            }else
-            {
+            } else {
                 role = 4;
             }
             this.db.getPstm().setInt(7, role);
             this.ok = db.executeMaj();
 
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         System.out.println(" ".repeat(60) + "-".repeat(15) + "Utilisateur ajouté" + "-".repeat(15));
@@ -103,16 +107,13 @@ public class UtilisateurImp implements IUtilisateur
     }
 
     @Override
-    public List<Utilisateur> getUtilisateurs()
-    {
+    public List<Utilisateur> getUtilisateurs() {
         List<Utilisateur> users = new ArrayList<>();
         String request = "SELECT * FROM utilisateurs user, roles R WHERE user.idRole = R.id AND user.id != 1";
-        try
-        {
+        try {
             this.db.initPrepare(request);
             this.rs = this.db.executeSelect();
-            while(this.rs.next())
-            {
+            while (this.rs.next()) {
                 Utilisateur user = new Utilisateur();
                 user.setId(this.rs.getInt("user.id"));
                 user.setNom(this.rs.getString("user.nom"));
@@ -124,40 +125,37 @@ public class UtilisateurImp implements IUtilisateur
                 user.setRole(this.rs.getString("R.nom"));
                 users.add(user);
             }
-        }catch(Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return users;
     }
 
-    public void lister()
-    {
+    public void lister() {
         this.systemCls();
         List<Utilisateur> users = this.getUtilisateurs();
         System.out.println("-".repeat(164));
         System.out.print("| # |");
-        System.out.printf(" ".repeat(7)+"%s"+" ".repeat(7), "Nom");
+        System.out.printf(" ".repeat(7) + "%s" + " ".repeat(7), "Nom");
         System.out.print("|");
-        System.out.printf(" ".repeat(6)+"%s"+" ".repeat(6), "Prenom");
+        System.out.printf(" ".repeat(6) + "%s" + " ".repeat(6), "Prenom");
         System.out.print("|");
-        System.out.printf(" ".repeat(8)+"%s"+" ".repeat(8), "Email");
+        System.out.printf(" ".repeat(8) + "%s" + " ".repeat(8), "Email");
         System.out.print("|");
-        System.out.printf(" ".repeat(5)+"%s"+" ".repeat(5), "Telephone");
+        System.out.printf(" ".repeat(5) + "%s" + " ".repeat(5), "Telephone");
         System.out.print("|");
-        System.out.printf(" ".repeat(5)+"%s"+" ".repeat(5), "Adresse");
+        System.out.printf(" ".repeat(5) + "%s" + " ".repeat(5), "Adresse");
         System.out.print("|");
-        System.out.printf(" ".repeat(3)+"%s"+" ".repeat(3), "Mot de passe");
+        System.out.printf(" ".repeat(3) + "%s" + " ".repeat(3), "Mot de passe");
         System.out.print("|");
-        System.out.printf(" ".repeat(3)+"%s"+" ".repeat(3), "Mot de passe crypté");
+        System.out.printf(" ".repeat(2) + "%s" + " ".repeat(2), "Mot de passe crypté");
         System.out.print("|");
-        System.out.printf(" ".repeat(6)+"%s"+" ".repeat(6), "Rôle");
+        System.out.printf(" ".repeat(6) + "%s" + " ".repeat(6), "Rôle");
         System.out.print("|\n");
         System.out.println("-".repeat(164));
 
         int compteur = 1;
-        for (Utilisateur user : users)
-        {
+        for (Utilisateur user : users) {
             System.out.printf("| %d |", compteur);
             System.out.printf("%13s", user.getNom());
             System.out.printf("%5s", "|");
@@ -169,10 +167,11 @@ public class UtilisateurImp implements IUtilisateur
             System.out.printf("%5s", "|");
             System.out.printf("%15s", user.getAdresse());
             System.out.printf("%3s", "|");
-            System.out.printf("%11s", user.getMotDePasse());
-            System.out.printf("%8s", "|");
-            System.out.printf("%15s", " ");
-            System.out.printf("%11s", "|");
+            System.out.printf("%15s", this.decrypteMotDePasse(user.getMotDePasse()));
+            System.out.printf("%4s", "|");
+
+            System.out.printf("%13s", user.getMotDePasse());
+            System.out.printf("%7s", "|");
             System.out.printf("%12s", user.getRole());
             System.out.printf("%5s\n", "|");
 
@@ -200,21 +199,18 @@ public class UtilisateurImp implements IUtilisateur
 
 
     @Override
-    public int modifier()
-    {
+    public int modifier()  {
         this.systemCls();
         Scanner clavier = new Scanner(System.in);
         do {
             System.out.print(" ".repeat(60) + "Entrer l'identifiant de l'utilisateur : ");
             int id = clavier.nextInt();
             Utilisateur user = this.get(id);
-            if(user != null)
-            {
+            if (user != null) {
 //
                 Utilisateur newUser = this.saisir();
                 String request = "UPDATE utilisateurs SET nom = ?, prenom = ?, email = ?, telephone = ?, adresse = ?, motDePasse = ? WHERE id = ?";
-                try
-                {
+                try {
                     this.db.initPrepare(request);
                     this.db.getPstm().setString(1, newUser.getNom());
                     this.db.getPstm().setString(2, newUser.getPrenom());
@@ -228,11 +224,10 @@ public class UtilisateurImp implements IUtilisateur
                     e.printStackTrace();
                 }
                 break;
-            }else
-            {
+            } else {
                 System.out.println(" ".repeat(60) + "Utilisateur inexistant!");
             }
-        }while(true);
+        } while (true);
         System.out.println(" ".repeat(60) + "-".repeat(15) + "Utilisateur modifié" + "-".repeat(15));
 
         this.systemPause();
@@ -242,18 +237,15 @@ public class UtilisateurImp implements IUtilisateur
     }
 
     @Override
-    public int supprimer()
-    {
+    public int supprimer() {
         this.systemCls();
         Scanner clavier = new Scanner(System.in);
         do {
             System.out.print(" ".repeat(60) + "Entrer l'identifiant de l'utilisateur : ");
             int id = clavier.nextInt();
-            if(this.get(id) != null)
-            {
+            if (this.get(id) != null) {
                 String request = "DELETE FROM utilisateurs WHERE id = ?";
-                try
-                {
+                try {
                     this.db.initPrepare(request);
                     this.db.getPstm().setInt(1, id);
                     this.ok = this.db.executeMaj();
@@ -262,11 +254,10 @@ public class UtilisateurImp implements IUtilisateur
                     e.printStackTrace();
                 }
                 break;
-            }else
-            {
+            } else {
                 System.out.println(" ".repeat(60) + "Utilisateur inexistant!");
             }
-        }while(true);
+        } while (true);
         System.out.println(" ".repeat(60) + "-".repeat(15) + "Utilisateur supprimé" + "-".repeat(15));
 
         this.systemPause();
@@ -274,17 +265,14 @@ public class UtilisateurImp implements IUtilisateur
         return this.ok;
     }
 
-    public Utilisateur get(int id)
-    {
+    public Utilisateur get(int id) {
         String request = "SELECT * FROM utilisateurs WHERE id = ?";
         Utilisateur user = null;
-        try
-        {
+        try {
             this.db.initPrepare(request);
             this.db.getPstm().setInt(1, id);
             this.rs = this.db.executeSelect();
-            if(this.rs.next())
-            {
+            if (this.rs.next()) {
                 user = new Utilisateur();
                 user.setId(this.rs.getInt("id"));
                 user.setNom(this.rs.getString("nom"));
@@ -321,53 +309,55 @@ public class UtilisateurImp implements IUtilisateur
         return role;
     }
 
-    public Utilisateur seConnecter()
-    {
+    public Utilisateur seConnecter()  {
         Scanner clavier = new Scanner(System.in);
         System.out.println(" ".repeat(60) + "Connexion" + "-".repeat(30));
-        System.out.print(" ".repeat(60)+"| Email : ");
+        System.out.print(" ".repeat(60) + "| Email : ");
         String email = clavier.nextLine();
+        String motDePasse = "";
 
-        System.out.print(" ".repeat(60)+"| Mot de passe : ");
-        String motDePasse = clavier.nextLine();
+        System.out.print(" ".repeat(60) + "| Mot de passe : ");
+        motDePasse = clavier.nextLine();
 
-        System.out.println();
-        System.out.println(" ".repeat(60) + "-".repeat(15) + "Bienvenue" + "-".repeat(15));
 
+
+//        System.out.println();
+//        System.out.println(" ".repeat(60) + "-".repeat(15) + "Bienvenue" + "-".repeat(15));
 
 
         String request = "SELECT * FROM utilisateurs U, roles R WHERE email = ? AND motDePasse = ? AND U.idRole = R.id";
         Utilisateur user = null;
-        try
-        {
+        try {
             this.db.initPrepare(request);
             this.db.getPstm().setString(1, email);
-            this.db.getPstm().setString(2, motDePasse);
+            this.db.getPstm().setString(2, crypteMotDePasse(motDePasse));
             this.rs = this.db.executeSelect();
-            if(this.rs.next())
-            {
+            if (this.rs.next()) {
                 String motDePasse1 = null;
                 String motDePasse2 = null;
+
                 boolean changed = false; // Permet de verifier si le mot de passe a été changé
-                if(this.rs.getString("U.motDePasse").equals("passer"))
-                {
+                String motDePasseDecrypte = this.rs.getString("U.motDePasse");
+
+
+                if (motDePasseDecrypte.equals(this.decrypteMotDePasse("passer"))) {
                     changed = true;
                     do {
                         System.out.println(" ".repeat(60) + "Modification des informations" + "-".repeat(30));
-                        System.out.print(" ".repeat(60)+"| Mot de passe : ");
+                        System.out.println(" ".repeat(60) + "Le mot de passe doit contenir exactement 5 caracteres");
+
+                        System.out.print(" ".repeat(60) + "| Mot de passe : ");
                         motDePasse1 = clavier.nextLine();
 
-                        System.out.print(" ".repeat(60)+"| Confirmation du mot de passe : ");
+                        System.out.print(" ".repeat(60) + "| Confirmation du mot de passe : ");
                         motDePasse2 = clavier.nextLine();
 
-                        if(motDePasse1.equals(motDePasse2))
-                        {
+                        if (motDePasse1.equals(motDePasse2)) {
                             break;
-                        }else
-                        {
+                        } else {
                             System.out.println(" ".repeat(60) + "Mots de passe non identiques");
                         }
-                    }while(true);
+                    } while (true);
                 }
                 user = new Utilisateur();
                 user.setId(this.rs.getInt("U.id"));
@@ -376,11 +366,11 @@ public class UtilisateurImp implements IUtilisateur
                 user.setEmail(this.rs.getString("U.email"));
                 user.setTelephone(this.rs.getString("U.telephone"));
                 user.setAdresse(this.rs.getString("U.adresse"));
-                String mdp = (changed)? motDePasse1 : this.rs.getString("U.motDePasse");
-                user.setMotDePasse(mdp);
+                String mdp = (changed) ? motDePasse1 : this.rs.getString("U.motDePasse");
+                user.setMotDePasse(this.crypteMotDePasse(mdp));
                 user.setRole(this.rs.getString("R.nom"));
 
-                this.modifierMotDePasse(mdp, user.getId());
+                this.modifierMotDePasse(user.getMotDePasse(), user.getId());
 
             }
 
@@ -392,23 +382,18 @@ public class UtilisateurImp implements IUtilisateur
 
     }
 
-    public void menu(Utilisateur user)
-    {
+    public void menu(Utilisateur user)  {
         Scanner clavier = new Scanner(System.in);
-        if(user.getId() == 1)
-        {
+        if (user.getId() == 1) {
             this.adminMenu();
-        }else if(user.getId() == 2)
-        {
+        } else if (user.getId() == 2) {
             this.RHMenu();
-        }else
-        {
+        } else {
             this.autreMenu();
         }
     }
 
-    public void adminMenu()
-    {
+    public void adminMenu()  {
         this.systemPause();
         this.systemCls();
         Scanner clavier = new Scanner(System.in);
@@ -423,8 +408,7 @@ public class UtilisateurImp implements IUtilisateur
             System.out.println(" ".repeat(59) + "| 5.Quitter");
             System.out.print(" ".repeat(59) + "| Selectionner une action : ");
             int choix1 = clavier.nextInt();
-            switch(choix1)
-            {
+            switch (choix1) {
                 case 1:
                     this.lister();
                     break;
@@ -440,11 +424,10 @@ public class UtilisateurImp implements IUtilisateur
                 case 5:
                     exit = false;
             }
-        }while(exit);
+        } while (exit);
     }
 
-    public void RHMenu()
-    {
+    public void RHMenu()  {
         this.systemPause();
         this.systemCls();
         Scanner clavier = new Scanner(System.in);
@@ -458,8 +441,7 @@ public class UtilisateurImp implements IUtilisateur
             System.out.println(" ".repeat(59) + "| 4.Quitter");
             System.out.print(" ".repeat(59) + "| Selectionner une action : ");
             int choix1 = clavier.nextInt();
-            switch(choix1)
-            {
+            switch (choix1) {
                 case 1:
                     this.lister();
                     break;
@@ -472,11 +454,10 @@ public class UtilisateurImp implements IUtilisateur
                 case 4:
                     exit = false;
             }
-        }while(exit);
+        } while (exit);
     }
 
-    public void autreMenu()
-    {
+    public void autreMenu() {
         this.systemPause();
         this.systemCls();
         Scanner clavier = new Scanner(System.in);
@@ -487,45 +468,63 @@ public class UtilisateurImp implements IUtilisateur
             System.out.println(" ".repeat(59) + "| 2.Quitter");
             System.out.print(" ".repeat(59) + "| Selectionner une action : ");
             int choix1 = clavier.nextInt();
-            switch(choix1)
-            {
+            switch (choix1) {
                 case 1:
                     this.lister();
                     break;
                 case 2:
                     exit = false;
             }
-        }while(exit);
+        } while (exit);
     }
 
-    public int modifierMotDePasse(String motDePasse, int id)
-    {
+    public int modifierMotDePasse(String motDePasse, int id) {
         String request = "UPDATE utilisateurs SET motDePasse = ? WHERE id = ?";
-        try
-        {
+        try {
             this.db.initPrepare(request);
             this.db.getPstm().setString(1, motDePasse);
             this.db.getPstm().setInt(2, id);
             this.ok = this.db.executeMaj();
-        } catch (SQLException e)
-        {
+        } catch (SQLException e) {
             throw new RuntimeException(e);
         }
         return ok;
     }
 
-    public void systemCls()
-    {
+    public void systemCls() {
         for (int i = 0; i < 50; i++) {
             System.out.println();
         }
     }
 
-    public void systemPause()
-    {
-        System.out.print(" ".repeat(60) +"Appuyez sur une touche pour continuer...");
+    public void systemPause() {
+        System.out.print(" ".repeat(60) + "Appuyez sur une touche pour continuer...");
 
         Scanner scanner = new Scanner(System.in);
         scanner.nextLine();
     }
+
+    public String crypteMotDePasse(String motDePasse) {
+        StringBuilder motDePasseCrypte= new StringBuilder();
+        for (int i = 0; i < motDePasse.length(); i++) {
+//            System.out.println((Character.toString(mdp1.charAt(i)+(i+32))));
+            motDePasseCrypte.append(Character.reverseBytes(motDePasse.charAt(i)));
+
+        }
+        return motDePasseCrypte.toString();
+    }
+
+    public String decrypteMotDePasse(String motDePasse) {
+        StringBuilder motDePasseDecrypte = new StringBuilder();
+        for (int i = 0; i < motDePasse.length(); i++) {
+//            System.out.println((Character.toString(mdp1.charAt(i)+(i+32))));
+            motDePasseDecrypte.append(Character.reverseBytes(motDePasse.charAt(i)));
+
+        }
+        return motDePasseDecrypte.toString();
+    }
 }
+
+
+
+

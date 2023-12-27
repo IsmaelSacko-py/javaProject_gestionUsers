@@ -5,8 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="45deff5c-9cb4-459c-a80c-ca9ec3520aea" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Main/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/dao/DB.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/dao/DB.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/dao/IUtilisateur.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/dao/IUtilisateur.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/dao/UtilisateurImp.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/dao/UtilisateurImp.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/entity/Utilisateur.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/entity/Utilisateur.java" afterDir="false" />
@@ -66,7 +68,8 @@
       <option name="presentableId" value="Default" />
       <updated>1703443147160</updated>
       <workItem from="1703443148178" duration="25500000" />
-      <workItem from="1703593456229" duration="16785000" />
+      <workItem from="1703593456229" duration="17811000" />
+      <workItem from="1703619082524" duration="13795000" />
     </task>
     <servers />
   </component>

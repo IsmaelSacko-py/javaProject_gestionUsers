@@ -5,14 +5,14 @@ import dao.IUtilisateur;
 import dao.UtilisateurImp;
 import entity.Utilisateur;
 
+
+
 public class Main {
-    public static void main(String[] args)
-    {
+    public static void main(String[] args)  {
         DB db = new DB();
         db.getConnection();
         IUtilisateur iUtilisateur = new UtilisateurImp();
-
-        Utilisateur connected = iUtilisateur.get(1);
+        Utilisateur connected;
         do
         {
             connected = iUtilisateur.seConnecter();
@@ -21,11 +21,14 @@ public class Main {
                 break;
             }else
             {
-                System.out.println("Identifiants incorrect");
+                System.out.println(" ".repeat(60) + "Identifiants incorrect");
             }
         }while(true);
 
         iUtilisateur.menu(connected);
+
+
+
 //        System.out.println("Id : " + connected.getId());
 //        System.out.println("Nom : " + connected.getNom());
 //        System.out.println("Prenom : " + connected.getPrenom());

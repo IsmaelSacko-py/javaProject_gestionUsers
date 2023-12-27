@@ -26,7 +26,6 @@ public class Utilisateur
         this.telephone = telephone;
         this.adresse = adresse;
         this.motDePasse = motDePasse;
-        this.motDePasseHache = null;
         this.role = role;
     }
 
