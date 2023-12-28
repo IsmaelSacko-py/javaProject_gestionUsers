@@ -4,7 +4,10 @@ import dao.DB;
 import dao.IUtilisateur;
 import dao.UtilisateurImp;
 import entity.Utilisateur;
+import org.mindrot.jbcrypt.BCrypt;
 
+import java.util.List;
+import java.util.Scanner;
 
 
 public class Main {
@@ -24,19 +27,7 @@ public class Main {
                 System.out.println(" ".repeat(60) + "Identifiants incorrect");
             }
         }while(true);
-
         iUtilisateur.menu(connected);
-
-
-
-//        System.out.println("Id : " + connected.getId());
-//        System.out.println("Nom : " + connected.getNom());
-//        System.out.println("Prenom : " + connected.getPrenom());
-//        System.out.println("Email : " + connected.getEmail());
-//        System.out.println("Telephone : " + connected.getTelephone());
-//        System.out.println("Adresse : " + connected.getAdresse());
-//        System.out.println("Mot de passe : " + connected.getMotDePasse());
-//        System.out.println("Role : " + connected.getRole());
     }
 
 }

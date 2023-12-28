@@ -11,14 +11,13 @@ public interface IUtilisateur
 
     String crypteMotDePasse(String motDePasse);
 
-    String decrypteMotDePasse(String motDePasse);
+    boolean checkMotDePasse(String motDePasse, String motDePasse2);
     Utilisateur saisir() ;
     int ajouter() ;
     List<Utilisateur> getUtilisateurs();
     void lister();
     int modifier() ;
     int supprimer();
-    Role getRole(int id);
 
     Utilisateur get(int id);
 
@@ -33,4 +32,8 @@ public interface IUtilisateur
 
     void systemPause();
     void systemCls();
+
+    List<List<String>> convertir(List<Utilisateur> users);
+
+    void creerTableau(List<List<String>> tableauUtilisateur);
 }

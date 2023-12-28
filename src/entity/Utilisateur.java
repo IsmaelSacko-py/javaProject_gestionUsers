@@ -17,7 +17,7 @@ public class Utilisateur
     {
     }
 
-    public Utilisateur(int id, String nom, String prenom, String email, String telephone, String adresse, String motDePasse, String role)
+    public Utilisateur(int id, String nom, String prenom, String telephone, String adresse, String motDePasse, String role)
     {
         this.id = id;
         this.nom = nom;
@@ -93,6 +93,14 @@ public class Utilisateur
 
     public void setMotDePasse(String motDePasse) {
         this.motDePasse = motDePasse;
+    }
+
+    public String getMotDePasseHache() {
+        return motDePasseHache;
+    }
+
+    public void setMotDePasseHache(String motDePasseHache) {
+        this.motDePasseHache = motDePasseHache;
     }
 
     public String getRole() {

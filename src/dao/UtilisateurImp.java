@@ -3,13 +3,12 @@ package dao;
 import entity.Role;
 import entity.Roles;
 import entity.Utilisateur;
+import org.mindrot.jbcrypt.BCrypt;
 
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 public class UtilisateurImp implements IUtilisateur {
 
@@ -47,7 +46,11 @@ public class UtilisateurImp implements IUtilisateur {
         System.out.print(" ".repeat(60) + "Adresse : ");
         user.setAdresse(clavier.nextLine());
 
-        user.setMotDePasse(this.crypteMotDePasse("passer"));
+        user.setMotDePasse("passer");
+        user.setMotDePasseHache(this.crypteMotDePasse(user.getMotDePasse()));
+
+//        System.out.println("mdp : " + user.getMotDePasse());
+//        System.out.println("mdp crypté : " + user.getMotDePasseHache());
 
         boolean exit = true;
         do {
@@ -72,6 +75,8 @@ public class UtilisateurImp implements IUtilisateur {
                     break;
             }
         } while (exit);
+
+
         return user;
     }
 
@@ -93,7 +98,7 @@ public class UtilisateurImp implements IUtilisateur {
             this.db.getPstm().setString(3, user.getEmail());
             this.db.getPstm().setString(4, user.getTelephone());
             this.db.getPstm().setString(5, user.getAdresse());
-            this.db.getPstm().setString(6, user.getMotDePasse());
+            this.db.getPstm().setString(6, user.getMotDePasseHache());
 
             int role = 0;
 
@@ -130,16 +135,20 @@ public class UtilisateurImp implements IUtilisateur {
             this.db.initPrepare(request);
             this.rs = this.db.executeSelect();
             while (this.rs.next()) {
+                //List<Utilisateur> utilisateur = new ArrayList<>();
                 Utilisateur user = new Utilisateur();
+
                 user.setId(this.rs.getInt("user.id"));
                 user.setNom(this.rs.getString("user.nom"));
                 user.setPrenom(this.rs.getString("user.prenom"));
                 user.setEmail(this.rs.getString("user.email"));
                 user.setTelephone(this.rs.getString("user.telephone"));
                 user.setAdresse(this.rs.getString("user.adresse"));
-                user.setMotDePasse(this.rs.getString("user.motDePasse"));
+                user.setMotDePasseHache(this.rs.getString("user.motDePasse"));
                 user.setRole(this.rs.getString("R.nom"));
+
                 users.add(user);
+                //allUsers.add(utilisateur);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -153,64 +162,10 @@ public class UtilisateurImp implements IUtilisateur {
     public void lister() {
 
         this.systemCls();
-        List<Utilisateur> users = this.getUtilisateurs();
-        System.out.println("-".repeat(164));
-        System.out.print("| # |");
-        System.out.printf(" ".repeat(7) + "%s" + " ".repeat(7), "Nom");
-        System.out.print("|");
-        System.out.printf(" ".repeat(6) + "%s" + " ".repeat(6), "Prenom");
-        System.out.print("|");
-        System.out.printf(" ".repeat(8) + "%s" + " ".repeat(8), "Email");
-        System.out.print("|");
-        System.out.printf(" ".repeat(5) + "%s" + " ".repeat(5), "Telephone");
-        System.out.print("|");
-        System.out.printf(" ".repeat(5) + "%s" + " ".repeat(5), "Adresse");
-        System.out.print("|");
-        System.out.printf(" ".repeat(3) + "%s" + " ".repeat(3), "Mot de passe");
-        System.out.print("|");
-        System.out.printf(" ".repeat(2) + "%s" + " ".repeat(2), "Mot de passe crypté");
-        System.out.print("|");
-        System.out.printf(" ".repeat(6) + "%s" + " ".repeat(6), "Rôle");
-        System.out.print("|\n");
-        System.out.println("-".repeat(164));
 
-        int compteur = 1;
-        for (Utilisateur user : users) {
-            System.out.printf("| %d |", compteur);
-            System.out.printf("%13s", user.getNom());
-            System.out.printf("%5s", "|");
-            System.out.printf("%13s", user.getPrenom());
-            System.out.printf("%6s", "|");
-            System.out.printf("%19s", user.getEmail());
-            System.out.printf("%3s", "|");
-            System.out.printf("%15s", user.getTelephone());
-            System.out.printf("%5s", "|");
-            System.out.printf("%15s", user.getAdresse());
-            System.out.printf("%3s", "|");
-            System.out.printf("%15s", this.decrypteMotDePasse(user.getMotDePasse()));
-            System.out.printf("%4s", "|");
+        List<List<String>> tableauUtilisateur = this.convertir(this.getUtilisateurs());
 
-            System.out.printf("%13s", user.getMotDePasse());
-            System.out.printf("%7s", "|");
-            System.out.printf("%12s", user.getRole());
-            System.out.printf("%5s\n", "|");
-
-            compteur++;
-
-//
-//            System.out.printf("%30s","-----");
-//            System.out.printf("%30s", user.getEmail());
-//
-//            System.out.printf("%40s","-----");
-//            System.out.printf("%40s", user.getTelephone());
-//
-//            System.out.printf("%50s","-----");
-//            System.out.printf("%50s", user.getAdresse());
-//
-//            System.out.printf("%60s","-----");
-//            System.out.printf("%60s", user.getMotDePasse());
-        }
-        System.out.println("-".repeat(164));
+        this.creerTableau(tableauUtilisateur);
 
         this.systemPause();
         this.systemCls();
@@ -316,33 +271,13 @@ public class UtilisateurImp implements IUtilisateur {
                 user.setEmail(this.rs.getString("email"));
                 user.setTelephone(this.rs.getString("telephone"));
                 user.setAdresse(this.rs.getString("adresse"));
-                user.setMotDePasse(this.rs.getString("motDePasse"));
+                user.setMotDePasseHache(this.rs.getString("motDePasse"));
 
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return user;
-    }
-
-    public Role getRole(int id) {
-        String sql = "SELECT * FROM roles WHERE id = ?";
-        Role role = null;
-
-        try {
-            this.db.initPrepare(sql);
-            this.db.getPstm().setInt(1, id);
-            this.rs = this.db.executeSelect();
-            if (this.rs.next()) {
-                role = new Role();
-                role.setId(this.rs.getInt("id"));
-                role.setNom(this.rs.getString("nom"));
-            }
-        } catch (Exception var5) {
-            var5.printStackTrace();
-        }
-
-        return role;
     }
 
     /**
@@ -359,10 +294,10 @@ public class UtilisateurImp implements IUtilisateur {
         System.out.println(" ".repeat(60) + "Connexion" + "-".repeat(30));
         System.out.print(" ".repeat(60) + "| Email : ");
         String email = clavier.nextLine();
-        String motDePasse = "";
+        String motDePasseSaisi = "";
 
         System.out.print(" ".repeat(60) + "| Mot de passe : ");
-        motDePasse = clavier.nextLine();
+        motDePasseSaisi = clavier.nextLine();
 
 
 
@@ -370,12 +305,11 @@ public class UtilisateurImp implements IUtilisateur {
 //        System.out.println(" ".repeat(60) + "-".repeat(15) + "Bienvenue" + "-".repeat(15));
 
 
-        String request = "SELECT * FROM utilisateurs U, roles R WHERE email = ? AND motDePasse = ? AND U.idRole = R.id";
+        String request = "SELECT * FROM utilisateurs U, roles R WHERE email = ? AND U.idRole = R.id";
         Utilisateur user = null;
         try {
             this.db.initPrepare(request);
             this.db.getPstm().setString(1, email);
-            this.db.getPstm().setString(2, crypteMotDePasse(motDePasse));
             this.rs = this.db.executeSelect();
             if (this.rs.next()) {
                 String motDePasse1 = null;
@@ -385,8 +319,10 @@ public class UtilisateurImp implements IUtilisateur {
                 String motDePasseDecrypte = this.rs.getString("U.motDePasse");
 
 
-                if (motDePasseDecrypte.equals(this.decrypteMotDePasse("passer"))) {
+                if (this.checkMotDePasse("passer", motDePasseDecrypte)) {
                     changed = true;
+                    this.systemPause();
+                    this.systemCls();
                     do {
                         System.out.println(" ".repeat(60) + "Modification des informations" + "-".repeat(30));
                         System.out.println(" ".repeat(60) + "Le mot de passe doit contenir exactement 5 caracteres");
@@ -411,11 +347,19 @@ public class UtilisateurImp implements IUtilisateur {
                 user.setEmail(this.rs.getString("U.email"));
                 user.setTelephone(this.rs.getString("U.telephone"));
                 user.setAdresse(this.rs.getString("U.adresse"));
-                String mdp = (changed) ? motDePasse1 : this.rs.getString("U.motDePasse");
-                user.setMotDePasse(this.crypteMotDePasse(mdp));
+                if(changed)
+                {
+                    user.setMotDePasse(motDePasse1);
+                    user.setMotDePasseHache(this.crypteMotDePasse(motDePasse1));
+                }else
+                {
+                    user.setMotDePasse(motDePasseSaisi);
+                    user.setMotDePasseHache(this.rs.getString("U.motDePasse"));
+                }
+
                 user.setRole(this.rs.getString("R.nom"));
 
-                this.modifierMotDePasse(user.getMotDePasse(), user.getId());
+                this.modifierMotDePasse(user.getMotDePasseHache(), user.getId());
 
             }
 
@@ -587,25 +531,132 @@ public class UtilisateurImp implements IUtilisateur {
      *
      * @return Le mot de passe crypter  ou decrypter
      */
-    public String crypteMotDePasse(String motDePasse) {
-
-        StringBuilder motDePasseCrypte= new StringBuilder();
-        for (int i = 0; i < motDePasse.length(); i++) {
-//            System.out.println((Character.toString(mdp1.charAt(i)+(i+32))));
-            motDePasseCrypte.append(Character.reverseBytes(motDePasse.charAt(i)));
-
-        }
-        return motDePasseCrypte.toString();
+    public String crypteMotDePasse(String motDePasse)
+    {
+        String sel = BCrypt.gensalt();
+        return BCrypt.hashpw(motDePasse, sel);
     }
 
-    public String decrypteMotDePasse(String motDePasse) {
-        StringBuilder motDePasseDecrypte = new StringBuilder();
-        for (int i = 0; i < motDePasse.length(); i++) {
-//            System.out.println((Character.toString(mdp1.charAt(i)+(i+32))));
-            motDePasseDecrypte.append(Character.reverseBytes(motDePasse.charAt(i)));
+    /**
+     * Verifie que les deux mots de passe correspondent.
+     * @param motDePasse1 Le mot de passe à verifier
+     * @param motDePasse2 Le mot de passe stocké
+     * @return true s'il y a correspondance, sinon false
+     */
+    public boolean checkMotDePasse(String motDePasse1, String motDePasse2)
+    {
+        return BCrypt.checkpw(motDePasse1, motDePasse2);
+    }
+
+    /**
+     * Convertit la liste des utilisateurs en une liste de liste de chaines de caracteres.
+     * La liste externe constitue tous les utilisateurs et la liste interne constitue un
+     * utilisateur. Cahque informations d'un utilisateur est chaine de caractere.
+     * Cela facilite la creation du tableau.
+     * @param users La liste des utilisateurs
+     * @return La matrice contenant les utilisateurs
+     */
+    public List<List<String>> convertir(List<Utilisateur> users)
+    {
+        List<List<String>> allUsers = new ArrayList<>();
+
+        List<String> titres = new ArrayList<>();
+        titres.add("#");
+        titres.add("Nom");
+        titres.add("Prenom");
+        titres.add("Email");
+        titres.add("Téléphone");
+        titres.add("Adresse");
+        titres.add("Mot de passe");
+//        titres.add("Mot de passe crypté");
+        titres.add("Rôle");
+
+        allUsers.add(titres);
+
+        for(Utilisateur user : users)
+        {
+            List<String> utilisateur = new ArrayList<>();
+            utilisateur.add(String.valueOf(user.getId()));
+            utilisateur.add(user.getNom());
+            utilisateur.add(user.getPrenom());
+            utilisateur.add(user.getEmail());
+            utilisateur.add(user.getTelephone());
+            utilisateur.add(user.getAdresse());
+//            utilisateur.add(user.getMotDePasse());
+            utilisateur.add(user.getMotDePasseHache());
+            utilisateur.add(user.getRole());
+            allUsers.add(utilisateur);
+        }
+        return allUsers;
+    }
+
+
+    /**
+     * Crée un tableau en console qui liste les differents utilisateurs.
+     * @param tableauUtilisateur Le tableau des utilisateurs
+     */
+    public void creerTableau(List<List<String>> tableauUtilisateur)
+    {
+        List<Integer> taillesTableaux = new ArrayList<>();
+
+        /**
+         * Determiner pour chaque colonne la longueur du mot le plus long
+         * et l'insere dans un tableau.
+         */
+        int tailleMax = 0 ;
+        for (int i = 0; i < tableauUtilisateur.get(0).size(); i++) {
+            tailleMax = 0;
+            for (int j = 0; j < tableauUtilisateur.size(); j++) {
+                if(tableauUtilisateur.get(j).get(i).length() > tailleMax)
+                {
+                    tailleMax = tableauUtilisateur.get(j).get(i).length();
+
+                }
+            }
+            taillesTableaux.add(tailleMax);
+        }
+
+        /** Fait la somme du tableau des differentes tailles dans le but
+           de savoir combien de fois l'on doit afficher ce caractere "-"
+           Cela permet de separer certaines lines du tableau.
+         */
+        int somme = 0;
+        for(int num : taillesTableaux)
+        {
+            somme += num;
+        }
+
+        System.out.println("-".repeat(somme + 3*taillesTableaux.size() + 1));
+
+        /**
+         * Crée les differentes lignes et colonnes.
+         * | : Une barre verticale servant de séparateur dans le tableau.
+         * % : Marque le début d'une spécification de format.
+         * - : Indique un alignement à gauche de la valeur.
+         * + (longueursMax[j] + 1) : Cela représente la largeur de la
+         * colonne pour la valeur en cours (la longueur maximale de la
+         * colonne, plus 1 pour un espace supplémentaire).
+         */
+        boolean isFirstLine = true;
+        for (List<String> ligne : tableauUtilisateur) {
+            for (int j = 0; j < ligne.size(); j++) {
+                String format = "| %-"+ (taillesTableaux.get(j) + 1) + "s";
+                System.out.printf(format, ligne.get(j));
+
+            }
+            System.out.println("|");
+
+            /*Permet de savoir si lors du listing, on a à faire à aux titres ou pas.
+              Cela permet de séparer les titres des autres lignes
+            */
+            if(isFirstLine)
+            {
+                System.out.println("-".repeat(somme + 3*taillesTableaux.size() + 1));
+                isFirstLine = false;
+            }
 
         }
-        return motDePasseDecrypte.toString();
+        System.out.println("-".repeat(somme + 3*taillesTableaux.size() + 1));
     }
 }
 
